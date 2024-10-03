@@ -1,0 +1,194 @@
+/* src/styles/global.css */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+
+:root {
+  --primary-color: #ff6b6b;
+  --secondary-color: #4ecdc4;
+  --background-color: #fff7e0;
+  --text-color: #333333;
+  --card-background: #ffffff;
+  --accent-color: #ffd93d;
+}
+
+body {
+  font-family: "Nunito", sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  background-color: var(--card-background);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 3px solid var(--accent-color);
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  background-color: var(--accent-color);
+  transform: scale(1.05);
+}
+
+input[type="text"],
+input[type="file"],
+select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid var(--secondary-color);
+  border-radius: 15px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--primary-color);
+  text-align: center;
+}
+
+h1 {
+  font-size: 3em;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px var(--accent-color);
+}
+
+h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 2em;
+  margin-bottom: 15px;
+}
+
+/* Add some fun animations */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.card:hover {
+  animation: bounce 0.5s ease;
+}
+
+/* Style for profile images */
+.profile-image {
+  max-width: 100%;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  border: 3px solid var(--accent-color);
+}
+
+/* Style for information list items */
+.info-item {
+  background-color: var(--background-color);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 2px solid var(--secondary-color);
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+.app-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 20px;
+  border-radius: 0 0 20px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2.8em;
+  font-weight: bold;
+  color: var(
+    --background-color
+  ); /* This should be a light color, like #FFF7E0 */
+  text-shadow: 2px 2px 0 var(--accent-color), -2px -2px 0 var(--accent-color),
+    2px -2px 0 var(--accent-color), -2px 2px 0 var(--accent-color),
+    0 2px 0 var(--accent-color), 2px 0 0 var(--accent-color),
+    0 -2px 0 var(--accent-color), -2px 0 0 var(--accent-color);
+  letter-spacing: 2px;
+}
+
+.user-info {
+  text-align: right;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.user-info p {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.user-info .btn {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.user-info .btn:hover {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.star-rating button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star-rating button:hover {
+  color: gold;
+}
+/* Add more kid-friendly styles as needed */

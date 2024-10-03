@@ -1,0 +1,62 @@
+.cool-facts-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.cool-fact-item {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.cool-fact-item:hover {
+  background-color: #e8e8e8;
+}
+
+.cool-fact-text {
+  flex-grow: 1;
+  margin-right: 16px;
+}
+
+.upvote-container {
+  display: flex;
+  align-items: center;
+  min-width: 80px;
+}
+
+.upvote-count {
+  font-weight: bold;
+  margin-right: 8px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.upvote-button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.upvote-button:hover {
+  background-color: #45a049;
+}
+
+.upvote-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5);
+}
