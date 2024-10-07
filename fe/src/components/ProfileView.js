@@ -27,14 +27,24 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (newInfo.trim().length < 3) {
+      alert("Please enter a fact with at least 3 characters.");
+      return;
+    }
     if (newInfo.trim()) {
       try {
+        console.log("Adding new info:", newInfo);
         const newInfoObject = await api.addInformation(
           profile.id,
           newInfo,
           profile.createdBy
         );
+        console.log("Adding new info:", newInfo);
         setLocalInformation([...localInformation, newInfoObject]);
+        console.log("Updated localInformation:", [
+          ...localInformation,
+          newInfoObject,
+        ]);
         onAddInformation(profile.name, newInfo);
         setNewInfo("");
       } catch (error) {
@@ -116,13 +126,13 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
 
       <h3>Cool Facts:</h3>
       <ul>
-        {localInformation.map((info, index) => (
+        {localInformation.map((info) => (
           // <li key={index}>
           //   {info.text} (Upvotes: {info.upvotes})
           //   <button onClick={() => handleLocalUpvote(index)}>👍</button>
           // </li>
-          <li key={index} className="cool-fact-item">
-            <span className="cool-fact-text">{info.text}</span>
+          <li key={info.id} className="cool-fact-item">
+            <span className="cool-fact-text">{info.content}</span>
             <div className="upvote-container">
               <span className="upvote-count">{info.upvotes}</span>
               <button
@@ -131,7 +141,7 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
                 aria-label="Upvote"
                 disabled={isUpvoting}
               >
-                👍
+                {isUpvoting ? "◌" : "👍"}
               </button>
             </div>
           </li>
