@@ -23,6 +23,8 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card {
@@ -140,20 +142,22 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .app-header h1 {
   margin: 0;
   font-size: 2.8em;
   font-weight: bold;
-  color: var(
-    --background-color
-  ); /* This should be a light color, like #FFF7E0 */
+  color: var(--background-color);
   text-shadow: 2px 2px 0 var(--accent-color), -2px -2px 0 var(--accent-color),
     2px -2px 0 var(--accent-color), -2px 2px 0 var(--accent-color),
     0 2px 0 var(--accent-color), 2px 0 0 var(--accent-color),
     0 -2px 0 var(--accent-color), -2px 0 0 var(--accent-color);
   letter-spacing: 2px;
+  text-align: center;
+  flex-grow: 1;
 }
 
 .user-info {
@@ -161,6 +165,7 @@ h3 {
   background-color: rgba(255, 255, 255, 0.2);
   padding: 10px;
   border-radius: 10px;
+  flex-shrink: 0;
 }
 
 .user-info p {

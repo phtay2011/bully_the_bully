@@ -1,28 +1,59 @@
 // components/ProfileView.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ProfileView.css"; // Add this line
+import * as api from "../api";
 
 function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
   const [newInfo, setNewInfo] = useState("");
-  const [localInformation, setLocalInformation] = useState(
-    profile.information || []
-  );
+  const [localInformation, setLocalInformation] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (newInfo.trim()) {
-      const newInfoObject = { text: newInfo, upvotes: 0 };
-      setLocalInformation([...localInformation, newInfoObject]);
-      onAddInformation(profile.name, newInfo);
-      setNewInfo("");
+  useEffect(() => {
+    loadInformation();
+  }, [profile.id]);
+
+  const loadInformation = async () => {
+    setIsLoading(true);
+    try {
+      const information = await api.getInformation(profile.id);
+      setLocalInformation(information);
+    } catch (error) {
+      console.error("Error loading information:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleLocalUpvote = (index) => {
-    const updatedInformation = [...localInformation];
-    updatedInformation[index].upvotes += 1;
-    setLocalInformation(updatedInformation);
-    onUpvote(profile.name, index);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (newInfo.trim()) {
+      try {
+        const newInfoObject = await api.addInformation(
+          profile.id,
+          newInfo,
+          profile.createdBy
+        );
+        setLocalInformation([...localInformation, newInfoObject]);
+        onAddInformation(profile.name, newInfo);
+        setNewInfo("");
+      } catch (error) {
+        console.error("Error adding information:", error);
+      }
+    }
+  };
+
+  const handleLocalUpvote = async (id) => {
+    try {
+      const updatedInfo = await api.upvoteInformation(id);
+      setLocalInformation(
+        localInformation.map((info) =>
+          info.id === updatedInfo.id ? updatedInfo : info
+        )
+      );
+      onUpvote(profile.name, id);
+    } catch (error) {
+      console.error("Error upvoting information:", error);
+    }
   };
 
   // Function to determine if the image is a base64 string
@@ -57,6 +88,9 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
     }
   };
 
+  if (isLoading) {
+    return <div>Loading profile information...</div>;
+  }
   return (
     <div className="profile-view">
       <h2>{profile.name}</h2>

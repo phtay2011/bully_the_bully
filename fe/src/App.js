@@ -6,6 +6,7 @@ import ProfileCreation from "./components/ProfileCreation";
 import ProfileView from "./components/ProfileView";
 import CategoryFilter from "./components/CategoryFilter";
 import "./styles/global.css";
+import * as api from "./api";
 
 const IDOL_CATEGORIES = {
   ALL: "All",
@@ -19,6 +20,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [profiles, setProfiles] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -26,10 +28,31 @@ function App() {
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
     }
+    loadProfiles();
   }, []);
 
-  const registerUser = (username, email) => {
-    setCurrentUser({ username, email });
+  const loadProfiles = async () => {
+    try {
+      const profilesData = await api.getProfiles();
+      const profilesObject = profilesData.reduce((acc, profile) => {
+        acc[profile.name] = profile;
+        return acc;
+      }, {});
+      setProfiles(profilesObject);
+    } catch (error) {
+      console.error("Error loading profiles:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const registerUser = async (username, email) => {
+    try {
+      const user = await api.registerUser(username, email);
+      setCurrentUser(user);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+    } catch (error) {
+      console.error("Error registering user:", error);
+    }
   };
 
   const logout = () => {
@@ -37,67 +60,131 @@ function App() {
     localStorage.removeItem("currentUser");
   };
 
-  const rateProfile = (profileName, rating) => {
-    setProfiles((prevProfiles) => {
-      const profile = prevProfiles[profileName];
-      const newRatings = [...profile.ratings, rating];
-      const averageRating =
-        newRatings.reduce((a, b) => a + b, 0) / newRatings.length;
-      return {
-        ...prevProfiles,
-        [profileName]: {
-          ...profile,
-          ratings: newRatings,
-          averageRating,
-        },
-      };
-    });
-  };
-  const createProfile = (name, category, image) => {
-    if (!profiles[name]) {
-      setProfiles((prevProfiles) => ({
-        ...prevProfiles,
-        [name]: {
-          name,
-          category,
-          image, // This will now be the data URL of the image
-          createdBy: currentUser.username,
-          information: [],
-          ratings: [],
-          averageRating: 0,
-        },
-      }));
+  // const rateProfile = (profileName, rating) => {
+  //   setProfiles((prevProfiles) => {
+  //     const profile = prevProfiles[profileName];
+  //     const newRatings = [...profile.ratings, rating];
+  //     const averageRating =
+  //       newRatings.reduce((a, b) => a + b, 0) / newRatings.length;
+  //     return {
+  //       ...prevProfiles,
+  //       [profileName]: {
+  //         ...profile,
+  //         ratings: newRatings,
+  //         averageRating,
+  //       },
+  //     };
+  //   });
+  // };
+
+  const rateProfile = async (profileName, rating) => {
+    try {
+      await api.rateProfile(profiles[profileName].id, rating, currentUser.id);
+      // You might want to update the local state here as well
+    } catch (error) {
+      console.error("Error rating profile:", error);
     }
   };
-  const addInformation = (idolName, content) => {
-    setProfiles((prevProfiles) => ({
-      ...prevProfiles,
-      [idolName]: {
-        ...prevProfiles[idolName],
-        information: [
-          ...prevProfiles[idolName].information,
-          { content, addedBy: currentUser.username, upvotes: 0 },
-        ],
-      },
-    }));
-  };
-  const upvoteInformation = (idolName, infoIndex) => {
-    setProfiles((prevProfiles) => ({
-      ...prevProfiles,
-      [idolName]: {
-        ...prevProfiles[idolName],
-        information: prevProfiles[idolName].information.map((info, index) =>
-          index === infoIndex ? { ...info, upvotes: info.upvotes + 1 } : info
-        ),
-      },
-    }));
+  // const createProfile = (name, category, image) => {
+  //   if (!profiles[name]) {
+  //     setProfiles((prevProfiles) => ({
+  //       ...prevProfiles,
+  //       [name]: {
+  //         name,
+  //         category,
+  //         image, // This will now be the data URL of the image
+  //         createdBy: currentUser.username,
+  //         information: [],
+  //         ratings: [],
+  //         averageRating: 0,
+  //       },
+  //     }));
+  //   }
+  // };
+
+  const createProfile = async (name, category, image) => {
+    try {
+      const newProfile = await api.createProfile(
+        name,
+        category,
+        image,
+        currentUser.id
+      );
+      setProfiles((prevProfiles) => ({
+        ...prevProfiles,
+        [name]: newProfile,
+      }));
+    } catch (error) {
+      console.error("Error creating profile:", error);
+    }
   };
 
-  const filteredProfiles = Object.values(profiles).filter(
-    (profile) =>
-      selectedCategory === "ALL" ||
-      profile.category === IDOL_CATEGORIES[selectedCategory]
+  // const addInformation = (idolName, content) => {
+  //   setProfiles((prevProfiles) => ({
+  //     ...prevProfiles,
+  //     [idolName]: {
+  //       ...prevProfiles[idolName],
+  //       information: [
+  //         ...prevProfiles[idolName].information,
+  //         { content, addedBy: currentUser.username, upvotes: 0 },
+  //       ],
+  //     },
+  //   }));
+  // };
+
+  const addInformation = async (idolName, content) => {
+    try {
+      const newInfo = await api.addInformation(
+        profiles[idolName].id,
+        content,
+        currentUser.id
+      );
+      setProfiles((prevProfiles) => ({
+        ...prevProfiles,
+        [idolName]: {
+          ...prevProfiles[idolName],
+          information: [...(prevProfiles[idolName].information || []), newInfo],
+        },
+      }));
+    } catch (error) {
+      console.error("Error adding information:", error);
+    }
+  };
+  // const upvoteInformation = (idolName, infoIndex) => {
+  //   setProfiles((prevProfiles) => ({
+  //     ...prevProfiles,
+  //     [idolName]: {
+  //       ...prevProfiles[idolName],
+  //       information: prevProfiles[idolName].information.map((info, index) =>
+  //         index === infoIndex ? { ...info, upvotes: info.upvotes + 1 } : info
+  //       ),
+  //     },
+  //   }));
+  // };
+
+  const upvoteInformation = async (idolName, infoId) => {
+    try {
+      const updatedInfo = await api.upvoteInformation(infoId);
+      setProfiles((prevProfiles) => ({
+        ...prevProfiles,
+        [idolName]: {
+          ...prevProfiles[idolName],
+          information: prevProfiles[idolName].information.map((info) =>
+            info.id === updatedInfo.id ? updatedInfo : info
+          ),
+        },
+      }));
+    } catch (error) {
+      console.error("Error upvoting information:", error);
+    }
+  };
+
+  const filteredProfiles = Object.values(profiles).filter((profile) =>
+    selectedCategory === "ALL" ? true : profile.category === selectedCategory
   );
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container">
