@@ -52,6 +52,11 @@ async function createTables() {
 createTables();
 
 // API routes
+
+app.get("/", (req, resp) => {
+  resp.send("Node API");
+});
+
 app.post("/api/users", async (req, res) => {
   const { username, phoneNumber } = req.body;
   try {
