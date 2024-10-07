@@ -79,7 +79,9 @@ app.post("/api/profiles", async (req, res) => {
 
 app.get("/api/profiles", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM profiles");
+    const result = await pool.query(
+      "SELECT * FROM profiles, users WHERE profiles.created_by = users.id"
+    );
     res.json(result.rows);
   } catch (error) {
     res.status(500).json({ error: error.message });

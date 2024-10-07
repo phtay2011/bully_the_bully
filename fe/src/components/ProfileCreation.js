@@ -33,7 +33,7 @@ function ProfileCreation({ onCreateProfile, categories }) {
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Idol Name"
+        placeholder="Bully Name"
         required
       />
       <select
@@ -41,14 +41,19 @@ function ProfileCreation({ onCreateProfile, categories }) {
         onChange={(e) => setCategory(e.target.value)}
         required
       >
-        <option value="">Select a category</option>
+        <option value="">🧠 Where do you flex your brain cells?</option>
         {Object.entries(categories).map(([key, value]) => (
           <option key={key} value={value}>
             {value}
           </option>
         ))}
       </select>
-      <input type="file" accept="image/*" onChange={handleImageChange} />
+      <input
+        disabled
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+      />
       {image && <img src={image} alt="Preview" style={{ maxWidth: "200px" }} />}
       <button className="btn" type="submit">
         Create Profile

@@ -120,11 +120,11 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
       </p>
       <p>
         <strong>Created by: </strong>
-        {profile.createdBy}
+        {profile.username}
       </p>
       {renderImage()}
 
-      <h3>Cool Facts:</h3>
+      <h3>Tea spills:</h3>
       <ul>
         {localInformation.map((info) => (
           // <li key={index}>
@@ -152,10 +152,10 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
           type="text"
           value={newInfo}
           onChange={(e) => setNewInfo(e.target.value)}
-          placeholder="Add a cool fact"
+          placeholder="Tea kettle's whistling - time to pour"
         />
         <button class="btn" type="submit">
-          Add Fact
+          Pour it out
         </button>
       </form>
     </div>

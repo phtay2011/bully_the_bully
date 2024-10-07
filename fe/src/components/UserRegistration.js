@@ -9,25 +9,21 @@ function UserRegistration({ onRegister }) {
     onRegister(username, phoneNumber);
   };
 
-  const handlePhoneNumberChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
-    setPhoneNumber(value);
-  };
-
   return (
     <div className="card">
-      <h2>Join the Fun!</h2>
+      <h2>🫸 Yeet the Bully</h2>
+      <h3>Drop your bully's name and watch it go viral!</h3>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Enter your username"
+          placeholder="📛 Drop your name here"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
           type="tel"
-          placeholder="Enter your phone number"
+          placeholder="📱 Slide us your digits (Optional: only if you want to be reached out.)"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           pattern="[0-9]{8,}" // Assumes phone numbers are at least 8 digits
@@ -35,7 +31,7 @@ function UserRegistration({ onRegister }) {
           //   required
         />
         <button className="btn" type="submit">
-          Register
+          Let's Fking GO!
         </button>
       </form>
     </div>

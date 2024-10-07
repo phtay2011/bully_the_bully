@@ -56,8 +56,9 @@ body {
 
 input[type="text"],
 input[type="file"],
+input[type="tel"],
 select {
-  width: 100%;
+  width: 95%;
   padding: 12px;
   margin-bottom: 15px;
   border: 2px solid var(--secondary-color);

@@ -3,7 +3,7 @@ import React from "react";
 function CategoryFilter({ categories, selectedCategory, onCategoryChange }) {
   return (
     <div>
-      <label htmlFor="category-filter">Filter by category: </label>
+      <label htmlFor="category-filter">Filter by school: </label>
       <select
         id="category-filter"
         value={selectedCategory}
