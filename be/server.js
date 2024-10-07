@@ -19,9 +19,9 @@ const pool = new Pool({
 async function createTables() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      username VARCHAR(255) UNIQUE NOT NULL,
-      email VARCHAR(255) UNIQUE NOT NULL
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    phone_number VARCHAR(20) UNIQUE NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS profiles (
@@ -53,18 +53,17 @@ createTables();
 
 // API routes
 app.post("/api/users", async (req, res) => {
-  const { username, email } = req.body;
+  const { username, phoneNumber } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
-      [username, email]
+      "INSERT INTO users (username, phone_number) VALUES ($1, $2) RETURNING id",
+      [username, phoneNumber]
     );
-    res.json({ id: result.rows[0].id, username, email });
+    res.json({ id: result.rows[0].id, username, phoneNumber });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 app.post("/api/profiles", async (req, res) => {
   const { name, category, image, createdBy } = req.body;
   try {

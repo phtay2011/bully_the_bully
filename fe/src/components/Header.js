@@ -7,7 +7,7 @@ function Header({ user, onLogout }) {
       {user && (
         <div className="user-info">
           <p>Welcome, {user.username}!</p>
-          <p>Email: {user.email}</p>
+          <p>Phone Number: {user.phoneNumber}</p>
           <button className="btn" onClick={onLogout}>
             Logout
           </button>

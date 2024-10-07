@@ -9,7 +9,7 @@ import "./styles/global.css";
 import * as api from "./api";
 
 const IDOL_CATEGORIES = {
-  ALL: "All",
+  // ALL: "All",
   AJC: "Anglo-Chinese Junior College",
   CJC: "Catholic Junior College",
   DHJC: "Dunman High School (Junior College)",
@@ -45,9 +45,9 @@ function App() {
       setIsLoading(false);
     }
   };
-  const registerUser = async (username, email) => {
+  const registerUser = async (username, phoneNumber) => {
     try {
-      const user = await api.registerUser(username, email);
+      const user = await api.registerUser(username, phoneNumber);
       setCurrentUser(user);
       localStorage.setItem("currentUser", JSON.stringify(user));
     } catch (error) {
