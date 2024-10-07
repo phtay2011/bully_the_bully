@@ -150,32 +150,34 @@ function App() {
       console.error("Error adding information:", error);
     }
   };
-  // const upvoteInformation = (idolName, infoIndex) => {
-  //   setProfiles((prevProfiles) => ({
-  //     ...prevProfiles,
-  //     [idolName]: {
-  //       ...prevProfiles[idolName],
-  //       information: prevProfiles[idolName].information.map((info, index) =>
-  //         index === infoIndex ? { ...info, upvotes: info.upvotes + 1 } : info
-  //       ),
-  //     },
-  //   }));
-  // };
 
   const upvoteInformation = async (idolName, infoId) => {
+    console.log("Upvoting in App.js for:", idolName, infoId);
     try {
       const updatedInfo = await api.upvoteInformation(infoId);
-      setProfiles((prevProfiles) => ({
-        ...prevProfiles,
-        [idolName]: {
-          ...prevProfiles[idolName],
-          information: prevProfiles[idolName].information.map((info) =>
-            info.id === updatedInfo.id ? updatedInfo : info
-          ),
-        },
-      }));
+      console.log("Received updated info in App.js:", updatedInfo);
+      setProfiles((prevProfiles) => {
+        const profile = prevProfiles[idolName];
+        if (!profile) {
+          console.error(`Profile not found: ${idolName}`);
+          return prevProfiles;
+        }
+        return {
+          ...prevProfiles,
+          [idolName]: {
+            ...profile,
+            information: profile.information
+              ? profile.information.map((info) =>
+                  info.id === updatedInfo.id ? updatedInfo : info
+                )
+              : [updatedInfo],
+          },
+        };
+      });
+      return updatedInfo; // Return the updated info
     } catch (error) {
       console.error("Error upvoting information:", error);
+      throw error; // Rethrow the error so it can be caught in ProfileView
     }
   };
 

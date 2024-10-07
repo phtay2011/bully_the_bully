@@ -7,6 +7,7 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
   const [newInfo, setNewInfo] = useState("");
   const [localInformation, setLocalInformation] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpvoting, setIsUpvoting] = useState(false);
 
   useEffect(() => {
     loadInformation();
@@ -43,16 +44,25 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
   };
 
   const handleLocalUpvote = async (id) => {
+    console.log("Upvote clicked for id:", id);
+    if (isUpvoting) return; // Prevent multiple rapid clicks
+    setIsUpvoting(true);
     try {
-      const updatedInfo = await api.upvoteInformation(id);
-      setLocalInformation(
-        localInformation.map((info) =>
+      // Call onUpvote and wait for it to complete
+      const updatedInfo = await onUpvote(profile.name, id);
+      console.log("Received updated info:", updatedInfo);
+
+      // Update local state with the result from onUpvote
+      setLocalInformation((prevInfo) =>
+        prevInfo.map((info) =>
           info.id === updatedInfo.id ? updatedInfo : info
         )
       );
-      onUpvote(profile.name, id);
     } catch (error) {
       console.error("Error upvoting information:", error);
+    } finally {
+      // Use setTimeout to allow a short delay before enabling the button again
+      setTimeout(() => setIsUpvoting(false), 500); // 500ms delay
     }
   };
 
@@ -116,9 +126,10 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
             <div className="upvote-container">
               <span className="upvote-count">{info.upvotes}</span>
               <button
-                onClick={() => handleLocalUpvote(index)}
+                onClick={() => handleLocalUpvote(info.id)}
                 className="upvote-button"
                 aria-label="Upvote"
+                disabled={isUpvoting}
               >
                 👍
               </button>

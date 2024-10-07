@@ -38,6 +38,7 @@ export const getInformation = async (profileId) => {
 
 export const upvoteInformation = async (id) => {
   const response = await axios.put(`${API_URL}/information/${id}/upvote`);
+  console.log("API response for upvote:", response.data);
   return response.data;
 };
 
