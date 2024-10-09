@@ -74,6 +74,7 @@ app.post("/api/users", async (req, res) => {
 });
 app.post("/api/profiles", async (req, res) => {
   const { name, category, image, createdBy } = req.body;
+  console.log(req.body);
   try {
     const result = await pool.query(
       "INSERT INTO profiles (name, category, image, created_by) VALUES ($1, $2, $3, $4) RETURNING id",
