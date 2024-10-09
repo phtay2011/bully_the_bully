@@ -1,3 +1,5 @@
+const fs = require("fs");
+const https = require("https");
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
@@ -7,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// https.createServer(options, app).listen(443);
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,

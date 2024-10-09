@@ -49,7 +49,7 @@ function ProfileCreation({ onCreateProfile, categories }) {
         ))}
       </select>
       <input
-        disabled
+        // disabled
         type="file"
         accept="image/*"
         onChange={handleImageChange}
