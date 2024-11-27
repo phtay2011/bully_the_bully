@@ -34,11 +34,11 @@ function App() {
   const loadProfiles = async () => {
     try {
       const profilesData = await api.getProfiles();
-      const profilesObject = profilesData.reduce((acc, profile) => {
-        acc[profile.name] = profile;
-        return acc;
-      }, {});
-      setProfiles(profilesObject);
+      // const profilesObject = profilesData.reduce((acc, profile) => {
+      //   acc[profile.name] = profile;
+      //   return acc;
+      // }, {});
+      setProfiles(profilesData);
     } catch (error) {
       console.error("Error loading profiles:", error);
     } finally {
@@ -132,52 +132,47 @@ function App() {
   //   }));
   // };
 
-  const addInformation = async (idolName, content) => {
+  const addInformation = async (profileId, content) => {
     try {
       const newInfo = await api.addInformation(
-        profiles[idolName].id,
+        profileId,
         content,
         currentUser.id
       );
-      setProfiles((prevProfiles) => ({
-        ...prevProfiles,
-        [idolName]: {
-          ...prevProfiles[idolName],
-          information: [...(prevProfiles[idolName].information || []), newInfo],
-        },
-      }));
+      setProfiles((prevProfiles) =>
+        prevProfiles.map((profile) =>
+          profile.id === profileId
+            ? {
+                ...profile,
+                information: [...(profile.information || []), newInfo],
+              }
+            : profile
+        )
+      );
     } catch (error) {
       console.error("Error adding information:", error);
     }
   };
 
-  const upvoteInformation = async (idolName, infoId) => {
-    console.log("Upvoting in App.js for:", idolName, infoId);
+  const upvoteInformation = async (profileId, infoId) => {
     try {
       const updatedInfo = await api.upvoteInformation(infoId);
-      console.log("Received updated info in App.js:", updatedInfo);
-      setProfiles((prevProfiles) => {
-        const profile = prevProfiles[idolName];
-        if (!profile) {
-          console.error(`Profile not found: ${idolName}`);
-          return prevProfiles;
-        }
-        return {
-          ...prevProfiles,
-          [idolName]: {
-            ...profile,
-            information: profile.information
-              ? profile.information.map((info) =>
+      setProfiles((prevProfiles) =>
+        prevProfiles.map((profile) =>
+          profile.id === profileId
+            ? {
+                ...profile,
+                information: profile.information.map((info) =>
                   info.id === updatedInfo.id ? updatedInfo : info
-                )
-              : [updatedInfo],
-          },
-        };
-      });
-      return updatedInfo; // Return the updated info
+                ),
+              }
+            : profile
+        )
+      );
+      return updatedInfo;
     } catch (error) {
       console.error("Error upvoting information:", error);
-      throw error; // Rethrow the error so it can be caught in ProfileView
+      throw error;
     }
   };
 
@@ -209,9 +204,9 @@ function App() {
             />
           </div>
           {filteredProfiles.map((profile) => (
-            <div className="card" key={profile.name}>
+            <div className="card" key={profile.id}>
               <ProfileView
-                profile={profile}
+                profileId={profile.id}
                 onAddInformation={addInformation}
                 onUpvote={upvoteInformation}
                 onRate={rateProfile}

@@ -16,6 +16,9 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 // Create tables
@@ -89,7 +92,8 @@ app.post("/api/profiles", async (req, res) => {
 app.get("/api/profiles", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM profiles, users WHERE profiles.created_by = users.id"
+      // "SELECT * FROM profiles, users WHERE profiles.created_by = users.id"
+      "SELECT profiles.id AS id,profiles.name,profiles.category,profiles.image,profiles.created_by,users.id AS user_id,users.username AS user_username,users.phone_number AS user_phone_number FROM profiles JOIN users ON profiles.created_by=users.id"
     );
     res.json(result.rows);
   } catch (error) {

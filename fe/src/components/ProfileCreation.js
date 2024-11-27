@@ -31,10 +31,10 @@ function ProfileCreation({ onCreateProfile, categories }) {
   const uploadToS3 = async (file) => {
     const fileName = `${Date.now()}-${file.name}`;
     const params = {
-      Bucket: "spillthetea",
+      Bucket: "spill-the-tea",
       Key: fileName,
       Body: file,
-      ACL: "public-read",
+      // ACL: "public-read",
     };
 
     try {

@@ -3,27 +3,44 @@ import React, { useState, useEffect } from "react";
 import "./ProfileView.css"; // Add this line
 import * as api from "../api";
 
-function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
+function ProfileView({ profileId, onAddInformation, onUpvote, onRate }) {
   const [newInfo, setNewInfo] = useState("");
+  const [isUpvoting, setIsUpvoting] = useState(false);
+  const [profile, setProfile] = useState(null);
   const [localInformation, setLocalInformation] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isUpvoting, setIsUpvoting] = useState(false);
 
   useEffect(() => {
-    loadInformation();
-  }, [profile.id]);
+    const loadProfileAndInformation = async () => {
+      setIsLoading(true);
+      try {
+        const profileData = await api.getProfiles(profileId);
+        setProfile(profileData[0]);
+        const information = await api.getInformation(profileId);
+        setLocalInformation(information);
+      } catch (error) {
+        console.error("Error loading profile or information:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const loadInformation = async () => {
-    setIsLoading(true);
-    try {
-      const information = await api.getInformation(profile.id);
-      setLocalInformation(information);
-    } catch (error) {
-      console.error("Error loading information:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    loadProfileAndInformation();
+  }, [profileId]);
+
+  // const loadInformation = async () => {
+  //   console.log("Loading information for profile ID:", profile.id);
+  //   setIsLoading(true);
+  //   try {
+  //     const information = await api.getInformation(profile.id);
+  //     console.log("Received information:", information);
+  //     setLocalInformation(information);
+  //   } catch (error) {
+  //     console.error("Error loading information:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,19 +50,8 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
     }
     if (newInfo.trim()) {
       try {
-        console.log("Adding new info:", newInfo);
-        const newInfoObject = await api.addInformation(
-          profile.id,
-          newInfo,
-          profile.createdBy
-        );
-        console.log("Adding new info:", newInfo);
-        setLocalInformation([...localInformation, newInfoObject]);
-        console.log("Updated localInformation:", [
-          ...localInformation,
-          newInfoObject,
-        ]);
-        onAddInformation(profile.name, newInfo);
+        const addedInfo = await onAddInformation(profile.id, newInfo);
+        setLocalInformation((prevInfo) => [...prevInfo, addedInfo]);
         setNewInfo("");
       } catch (error) {
         console.error("Error adding information:", error);
@@ -53,26 +59,20 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
     }
   };
 
-  const handleLocalUpvote = async (id) => {
-    console.log("Upvote clicked for id:", id);
-    if (isUpvoting) return; // Prevent multiple rapid clicks
+  const handleLocalUpvote = async (infoId) => {
+    if (isUpvoting) return;
     setIsUpvoting(true);
     try {
-      // Call onUpvote and wait for it to complete
-      const updatedInfo = await onUpvote(profile.name, id);
-      console.log("Received updated info:", updatedInfo);
-
-      // Update local state with the result from onUpvote
+      const updatedInfo = await onUpvote(profile.id, infoId);
       setLocalInformation((prevInfo) =>
         prevInfo.map((info) =>
           info.id === updatedInfo.id ? updatedInfo : info
         )
       );
     } catch (error) {
-      console.error("Error upvoting information:", error);
+      console.error("Error upvoting:", error);
     } finally {
-      // Use setTimeout to allow a short delay before enabling the button again
-      setTimeout(() => setIsUpvoting(false), 500); // 500ms delay
+      setIsUpvoting(false);
     }
   };
 
@@ -120,7 +120,7 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
       </p>
       <p>
         <strong>Created by: </strong>
-        {profile.username}
+        {profile.user_username}
       </p>
       {renderImage()}
 
@@ -154,7 +154,7 @@ function ProfileView({ profile, onAddInformation, onUpvote, onRate }) {
           onChange={(e) => setNewInfo(e.target.value)}
           placeholder="Tea kettle's whistling - time to pour"
         />
-        <button class="btn" type="submit">
+        <button className="btn" type="submit">
           Pour it out
         </button>
       </form>

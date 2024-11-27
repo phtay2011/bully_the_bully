@@ -28,16 +28,20 @@ export const getProfiles = async () => {
 };
 
 export const addInformation = async (profileId, content, addedBy) => {
+  console.log("Adding information for profile ID:", profileId);
   const response = await axios.post(`${API_URL}/information`, {
     profileId,
     content,
     addedBy,
   });
+  console.log("Added information:", response.data);
   return response.data;
 };
 
 export const getInformation = async (profileId) => {
+  console.log("Fetching information for profile ID:", profileId);
   const response = await axios.get(`${API_URL}/information/${profileId}`);
+  console.log("Received information:", response.data);
   return response.data;
 };
 
