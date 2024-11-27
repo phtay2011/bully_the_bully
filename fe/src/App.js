@@ -18,7 +18,7 @@ const IDOL_CATEGORIES = {
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [profiles, setProfiles] = useState({});
+  const [profiles, setProfiles] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,13 +34,14 @@ function App() {
   const loadProfiles = async () => {
     try {
       const profilesData = await api.getProfiles();
+      setProfiles(Array.isArray(profilesData) ? profilesData : []);
       // const profilesObject = profilesData.reduce((acc, profile) => {
       //   acc[profile.name] = profile;
       //   return acc;
       // }, {});
-      setProfiles(profilesData);
     } catch (error) {
       console.error("Error loading profiles:", error);
+      setProfiles([]);
     } finally {
       setIsLoading(false);
     }
@@ -177,8 +178,15 @@ function App() {
   };
 
   const filteredProfiles = Object.values(profiles).filter((profile) =>
-    selectedCategory === "ALL" ? true : profile.category === selectedCategory
+    selectedCategory === "ALL"
+      ? true
+      : profile.category === IDOL_CATEGORIES[selectedCategory]
   );
+  // const filteredProfiles = profiles.filter((profile) =>
+  //   selectedCategory === "ALL" ? true : profile.category === selectedCategory
+  // );
+  console.log(selectedCategory);
+  console.log(filteredProfiles);
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -203,16 +211,20 @@ function App() {
               onCategoryChange={setSelectedCategory}
             />
           </div>
-          {filteredProfiles.map((profile) => (
-            <div className="card" key={profile.id}>
-              <ProfileView
-                profileId={profile.id}
-                onAddInformation={addInformation}
-                onUpvote={upvoteInformation}
-                onRate={rateProfile}
-              />
-            </div>
-          ))}
+          {Array.isArray(profiles) &&
+            filteredProfiles.map(
+              (profile) =>
+                profile && (
+                  <div className="card" key={profile.id}>
+                    <ProfileView
+                      profile={profile}
+                      onAddInformation={addInformation}
+                      onUpvote={upvoteInformation}
+                      onRate={rateProfile}
+                    />
+                  </div>
+                )
+            )}
         </>
       )}
     </div>
