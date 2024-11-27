@@ -25,6 +25,7 @@ function ProfileCreation({ onCreateProfile, categories }) {
       setCategory("");
       setImage(null);
       setImageUrl("");
+      window.location.reload();
     }
   };
 

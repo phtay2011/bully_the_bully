@@ -27,7 +27,7 @@ async function createTables() {
     CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
-    phone_number VARCHAR(20) UNIQUE NOT NULL
+    phone_number VARCHAR(20) NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS profiles (
@@ -72,6 +72,7 @@ app.post("/api/users", async (req, res) => {
     );
     res.json({ id: result.rows[0].id, username, phoneNumber });
   } catch (error) {
+    console.error("Error inserting user:", error);
     res.status(500).json({ error: error.message });
   }
 });
